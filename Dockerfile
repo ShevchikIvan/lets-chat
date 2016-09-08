@@ -7,6 +7,7 @@ ENV PKG_JSON_URL=https://raw.githubusercontent.com/shevchikivan/lets-chat/master
     LCB_PLUGINS='lets-chat-ldap lets-chat-s3'
 
 RUN mkdir -p /usr/src/app
+RUN npm install
 WORKDIR /usr/src/app
 
 ADD $PKG_JSON_URL ./package.json
