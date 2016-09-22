@@ -1,4 +1,4 @@
-FROM davidsblog/node-mongo:latest
+FROM node:0.12-slim
 MAINTAINER SD Elements
 
 ENV PKG_JSON_URL=https://raw.githubusercontent.com/sdelements/lets-chat/master/package.json \
@@ -32,17 +32,17 @@ RUN groupadd -r node \
 &&  useradd -r -g node node \
 &&  chown node:node uploads
 
-ENV LCB_DATABASE_URI=mongodb://localhost/letschat \
+ENV LCB_DATABASE_URI=mongodb://mongo/letschat \
     LCB_HTTP_HOST=0.0.0.0 \
     LCB_HTTP_PORT=8080 \
     LCB_XMPP_ENABLE=true \
     LCB_XMPP_PORT=5222
+
+USER node
 
 EXPOSE 8080 5222
 
 VOLUME ["/usr/src/app/config"]
 VOLUME ["/usr/src/app/uploads"]
 
-ADD start.sh /usr/src/app/start.sh
-RUN chmod +x /usr/src/app/start.sh
-CMD "/usr/src/app/start.sh"
+CMD ["npm", "start"]
