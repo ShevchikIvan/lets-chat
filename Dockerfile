@@ -1,13 +1,12 @@
-FROM node:0.12-slim
+FROM davidsblog/node-mongo:latest
 MAINTAINER SD Elements
 
-ENV PKG_JSON_URL=https://raw.githubusercontent.com/shevchikivan/lets-chat/master/package.json \
-    TAR_GZ_URL=https://github.com/shevchikivan/lets-chat/archive/master.tar.gz \
+ENV PKG_JSON_URL=https://raw.githubusercontent.com/sdelements/lets-chat/master/package.json \
+    TAR_GZ_URL=https://github.com/sdelements/lets-chat/archive/master.tar.gz \
     BUILD_DEPS='g++ gcc git make python' \
     LCB_PLUGINS='lets-chat-ldap lets-chat-s3'
 
 RUN mkdir -p /usr/src/app
-RUN npm install
 WORKDIR /usr/src/app
 
 ADD $PKG_JSON_URL ./package.json
@@ -31,21 +30,19 @@ RUN tar -xzvf master.tar.gz \
 
 RUN groupadd -r node \
 &&  useradd -r -g node node \
-&&  chown node:node uploads \
-&&  mkdir -p builtAssets \
-&&  chown node:node builtAssets
+&&  chown node:node uploads
 
-ENV LCB_DATABASE_URI=mongodb://mongo/letschat \
+ENV LCB_DATABASE_URI=mongodb://localhost/letschat \
     LCB_HTTP_HOST=0.0.0.0 \
     LCB_HTTP_PORT=8080 \
     LCB_XMPP_ENABLE=true \
     LCB_XMPP_PORT=5222
-
-USER node
 
 EXPOSE 8080 5222
 
 VOLUME ["/usr/src/app/config"]
 VOLUME ["/usr/src/app/uploads"]
 
-CMD ["npm", "start"]
+ADD start.sh /usr/src/app/start.sh
+RUN chmod +x /usr/src/app/start.sh
+CMD "/usr/src/app/start.sh"
